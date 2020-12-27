@@ -146,15 +146,85 @@ void display(node *starting)
     }
 }
 
+void dequeue()
+{
+    if (head == nullptr)
+    {
+        cout << "Nothing in queue" << endl;
+    }
+    if (head == tail)
+    {
+        delete head;
+        head = nullptr;
+        tail = nullptr;
+    }
+    else if (head->next == tail)
+    {
+        node *p = head;
+        head = tail;
+        delete p;
+    }
+    else
+    {
+        cout << head->name + " discharged!\n"
+             << endl;
+        node *del = head;
+        head = head->next;
+        head->next->prev = head;
+        delete del;
+    }
+}
+
 int main()
 {
     addPatient("Bukhari", 60, "1234567890123", "Male", "Covid-19", "SEVERE", 3, 7, 2020);
     addPatient("Umair", 18, "1234567890123", "Male", "Covid-19", "MODERATE", 3, 7, 2020);
-    addPatient("Rana", 18, "1234567890123", "Male", "Covid-19", "SEVERE", 3, 7, 2020);
+    addPatient("Rana", 18, "1234567890123", "Male", "FLU", "SEVERE", 3, 7, 2020);
     addPatient("Hashaam", 60, "1234567890123", "Male", "Covid-19", "MODERATE", 3, 7, 2020);
     addPatient("Saad", 18, "1234567890123", "Male", "Covid-19", "MODERATE", 3, 7, 2020);
     addPatient("Channar", 30, "1234567890123", "Male", "Covid-19", "SEVERE", 3, 7, 2020);
 
     display(head);
-    cout << endl;
+    cout << "\n"
+         << endl;
+
+    dequeue();
+    display(head);
+    cout << "\n"
+         << endl;
+
+    dequeue();
+    display(head);
+    cout << "\n"
+         << endl;
+
+    dequeue();
+    display(head);
+    cout << "\n"
+         << endl;
+
+    dequeue();
+    display(head);
+    cout << "\n"
+         << endl;
+
+    dequeue();
+    display(head);
+    cout << "\n"
+         << endl;
+
+    dequeue();
+    display(head);
+    cout << "\n"
+         << endl;
+
+    dequeue();
+    display(head);
+    cout << "\n"
+         << endl;
+
+    dequeue();
+    display(head);
+    cout << "\n"
+         << endl;
 }
