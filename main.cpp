@@ -71,8 +71,6 @@ void setPriority(node *patient)
     {
         patient->priority = 5;
     }
-
-    cout << patient->name + ": " << patient->priority << endl;
 }
 void addPatient(string name, int age, string socialSecurityNumber, string gender, string disease, string condition, int day,
                 int month, int year)
@@ -144,6 +142,7 @@ void display(node *starting)
         cout << starting->name << ", ";
         starting = starting->next;
     }
+    cout << endl;
 }
 
 void dequeue()
@@ -152,14 +151,18 @@ void dequeue()
     {
         cout << "Nothing in queue" << endl;
     }
-    if (head == tail)
+    else if (head == tail)
     {
+        cout << head->name + " discharged!\n"
+             << endl;
         delete head;
         head = nullptr;
         tail = nullptr;
     }
     else if (head->next == tail)
     {
+        cout << head->name + " discharged!\n"
+             << endl;
         node *p = head;
         head = tail;
         delete p;
@@ -185,46 +188,28 @@ int main()
     addPatient("Channar", 30, "1234567890123", "Male", "Covid-19", "SEVERE", 3, 7, 2020);
 
     display(head);
-    cout << "\n"
-         << endl;
 
     dequeue();
     display(head);
-    cout << "\n"
-         << endl;
 
     dequeue();
     display(head);
-    cout << "\n"
-         << endl;
 
     dequeue();
     display(head);
-    cout << "\n"
-         << endl;
 
     dequeue();
     display(head);
-    cout << "\n"
-         << endl;
 
     dequeue();
     display(head);
-    cout << "\n"
-         << endl;
 
     dequeue();
     display(head);
-    cout << "\n"
-         << endl;
 
     dequeue();
     display(head);
-    cout << "\n"
-         << endl;
 
     dequeue();
     display(head);
-    cout << "\n"
-         << endl;
 }
