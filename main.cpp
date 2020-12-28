@@ -153,7 +153,7 @@ void dequeue()
     }
     else if (head == tail)
     {
-        cout << head->name + " discharged!\n"
+        cout << head->name + " discharged!"
              << endl;
         delete head;
         head = nullptr;
@@ -161,7 +161,7 @@ void dequeue()
     }
     else if (head->next == tail)
     {
-        cout << head->name + " discharged!\n"
+        cout << head->name + " discharged!"
              << endl;
         node *p = head;
         head = tail;
@@ -169,7 +169,7 @@ void dequeue()
     }
     else
     {
-        cout << head->name + " discharged!\n"
+        cout << head->name + " discharged!"
              << endl;
         node *del = head;
         head = head->next;
