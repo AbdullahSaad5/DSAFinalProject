@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 using namespace std;
 struct node
 {
@@ -137,10 +138,21 @@ void addPatient(string name, int age, string socialSecurityNumber, string gender
 
 void display(node *starting)
 {
+    int count = 1;
+    cout << "\nPatient Record: ";
     while (starting != nullptr)
     {
-        cout << starting->name << ", ";
+        cout << "\nPatient " << count << ": ";
+        cout << "Name: " << starting->name << "  ";
+        cout << "Age: " << starting->age << "  ";
+        cout << "SSN: " << starting->socialSecurityNumber << endl;
+        cout << "Gender: " << starting->gender << "  ";
+        cout << "Disease: " << starting->disease << "  ";
+        cout << "Condition: " << starting->condition << "  ";
+        cout << "Admit Date: " << starting->date << ", " << starting->month << ", " << starting->year;
         starting = starting->next;
+        cout << "\n";
+        count++;
     }
     cout << endl;
 }
@@ -155,6 +167,8 @@ void dequeue()
     {
         cout << head->name + " discharged!"
              << endl;
+        head->condition = "NORMAL";
+        head->disease = "NIL";
         delete head;
         head = nullptr;
         tail = nullptr;
@@ -163,6 +177,8 @@ void dequeue()
     {
         cout << head->name + " discharged!"
              << endl;
+        head->condition = "NORMAL";
+        head->disease = "NIL";
         node *p = head;
         head = tail;
         delete p;
@@ -171,10 +187,57 @@ void dequeue()
     {
         cout << head->name + " discharged!"
              << endl;
+        head->condition = "NORMAL";
+        head->disease = "NIL";
         node *del = head;
         head = head->next;
         head->next->prev = head;
         delete del;
+    }
+}
+
+node *search(string name)
+{
+    node *p = head;
+    while (p != nullptr)
+    {
+        if (p->name == convertToUpperCase(name))
+        {
+            return p;
+        }
+        p = p->next;
+    }
+    return nullptr;
+}
+
+void update(string name, string condition)
+{
+    node *p = head;
+    while (p != nullptr)
+    {
+        if (p->name == convertToUpperCase(name))
+        {
+            break;
+        }
+        p = p->next;
+    }
+
+    if (p != nullptr)
+    {
+        condition = convertToUpperCase(condition);
+        if (condition == "SEVERE" || condition == "MODERATE" || condition == "MILD" || condition == "NORMAL")
+        {
+            p->condition = condition;
+            // if (condition == "NORMAL")
+            // {
+
+            // }
+            cout << "Condition Updated" << endl;
+        }
+    }
+    else
+    {
+        cout << "Patient Not Found" << endl;
     }
 }
 
@@ -189,27 +252,12 @@ int main()
 
     display(head);
 
-    dequeue();
-    display(head);
+    node *searched = search("Abdullah");
+    if (searched != nullptr)
+        cout << searched->name << endl;
+    else
+        cout << "Patient Not found" << endl;
 
-    dequeue();
-    display(head);
-
-    dequeue();
-    display(head);
-
-    dequeue();
-    display(head);
-
-    dequeue();
-    display(head);
-
-    dequeue();
-    display(head);
-
-    dequeue();
-    display(head);
-
-    dequeue();
+    update("Rana", "Moderate");
     display(head);
 }
