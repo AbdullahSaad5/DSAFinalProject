@@ -11,6 +11,7 @@ struct node
     string condition;
     int date, month, year;
     int priority;
+    string doctor;
     node *next = nullptr;
     node *prev = nullptr;
 };
@@ -209,7 +210,7 @@ node *search(string name)
     }
     return nullptr;
 }
-void dischargeNormal(string name)
+void removePatient(string name)
 {
     node *p = head;
     while (p != nullptr)
@@ -225,7 +226,6 @@ void dischargeNormal(string name)
         delete head;
         head = nullptr;
         tail = nullptr;
-        cout << "Patient " << convertToUpperCase(name) << " is Discharged!" << endl;
     }
     else if (p == head)
     {
@@ -233,7 +233,6 @@ void dischargeNormal(string name)
         head->next->prev = head->prev;
         head = head->next;
         delete del;
-        cout << "Patient " << convertToUpperCase(name) << " is Discharged!" << endl;
     }
     else if (p == tail)
     {
@@ -241,7 +240,6 @@ void dischargeNormal(string name)
         tail->prev->next = tail->next;
         tail = tail->prev;
         delete del;
-        cout << "Patient " << convertToUpperCase(name) << " is Discharged!" << endl;
     }
     else
     {
@@ -249,7 +247,6 @@ void dischargeNormal(string name)
         p->prev->next = p->next;
         p->next->prev = p->prev;
         delete del;
-        cout << "Patient " << convertToUpperCase(name) << " is Discharged!" << endl;
     }
 }
 
@@ -273,7 +270,14 @@ void update(string name, string condition)
             p->condition = condition;
             if (condition == "NORMAL")
             {
-                dischargeNormal(name);
+                removePatient(p->name);
+            }
+            else
+            {
+                node *q = p;
+                setPriority(p);
+                addPatient(p->name, p->age, p->socialSecurityNumber, p->gender, p->disease, p->condition, p->date, p->month, p->year);
+                removePatient(q->name);
             }
             cout << "Condition Updated" << endl;
         }
@@ -287,23 +291,77 @@ void update(string name, string condition)
 
 int main()
 {
-    addPatient("Bukhari", 60, "1234567890123", "Male", "Covid-19", "SEVERE", 3, 7, 2020);
-    addPatient("Umair", 18, "1234567890123", "Male", "Covid-19", "MODERATE", 3, 7, 2020);
-    addPatient("Rana", 18, "1234567890123", "Male", "FLU", "SEVERE", 3, 7, 2020);
-    addPatient("Hashaam", 60, "1234567890123", "Male", "Covid-19", "MODERATE", 3, 7, 2020);
-    addPatient("Saad", 18, "1234567890123", "Male", "Covid-19", "MODERATE", 3, 7, 2020);
-    addPatient("Channar", 30, "1234567890123", "Male", "Covid-19", "SEVERE", 3, 7, 2020);
+    //Main Menu
+    bool infinite_loop = true;
+    while (infinite_loop)
+    {
+        cout << "\nWelcome to Hospital Management System\n"
+             << "1. Add Patient\n"
+             << "2. View Patients\n"
+             << "3. Update Patient\n"
+             << "4. Search Patient\n"
+             << "5. Discharged Patient\n"
+             << "0. EXIT\n"
+             << "Choice >> ";
+        int choice;
+        cin >> choice;
+        string patient_name;
+        int patient_age;
+        string p_socialSecurityNumber;
+        string p_gender;
+        string p_disease;
+        string p_condition;
+        int p_date, p_month, p_year;
 
-    display(head);
+        switch (choice)
+        {
+        case 1:
 
-    node *searched = search("Abdullah");
-    if (searched != nullptr)
-        cout << searched->name << endl;
-    else
-        cout << "Patient Not found" << endl;
-
-    update("Rana", "NORMAL");
-    display(head);
-    //update("Bukhari", "noraml");
-    //display(head);
+            cout << "Enter Patient Name:";
+            cin >> patient_name;
+            cout << "Enter Patient Age:";
+            cin >> patient_age;
+            cout << "Enter Patient SSN: ";
+            cin >> p_socialSecurityNumber;
+            cout << "Enter Patient Gender: ";
+            cin >> p_gender;
+            cout << "Enter Patient Disease: ";
+            cin >> p_disease;
+            cout << "Enter Patient Condition: ";
+            cin >> p_condition;
+            cout << "Enter Patient Admit Date: ";
+            cin >> p_date;
+            cout << "Enter Patient Admit Month: ";
+            cin >> p_month;
+            cout << "Enter Patient Admit Year: ";
+            cin >> p_year;
+            addPatient(patient_name, patient_age, p_socialSecurityNumber, p_gender, p_disease, p_condition, p_date, p_month, p_year);
+            break;
+        case 2:
+            display(head);
+            break;
+        case 3:
+            cout << "Enter Patient Name: ";
+            cin >> patient_name;
+            cout << "Enter Patient Condition: ";
+            cin >> p_condition;
+            update(patient_name, p_condition);
+            break;
+        case 4:
+            cout << "Enter Patient Name: ";
+            cin >> patient_name;
+            search(patient_name);
+            break;
+        case 5:
+            cout << "Highest Priority Patient Dequeued: ";
+            dequeue();
+            break;
+        case 0:
+            infinite_loop = false;
+            break;
+        default:
+            cout << "Invalid Command Entered!";
+            break;
+        }
+    }
 }
