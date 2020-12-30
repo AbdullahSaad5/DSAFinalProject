@@ -252,12 +252,36 @@ int main()
 
     display(head);
 
-    node *searched = search("Abdullah");
-    if (searched != nullptr)
-        cout << searched->name << endl;
-    else
-        cout << "Patient Not found" << endl;
+    // node *searched = search("Abdullah");
+    // if (searched != nullptr)
+    //     cout << searched->name << endl;
+    // else
+    //     cout << "Patient Not found" << endl;
 
-    update("Rana", "Moderate");
+    // update("Rana", "Moderate");
+    // display(head);
+
+    dequeue();
+    display(head);
+
+    dequeue();
+    display(head);
+
+    dequeue();
+    display(head);
+
+    dequeue();
+    display(head);
+
+    dequeue();
+    display(head);
+
+    dequeue();
+    display(head);
+
+    dequeue();
+    display(head);
+
+    dequeue();
     display(head);
 }
