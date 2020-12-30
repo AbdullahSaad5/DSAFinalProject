@@ -209,6 +209,49 @@ node *search(string name)
     }
     return nullptr;
 }
+void dischargeNormal(string name)
+{
+    node *p = head;
+    while (p != nullptr)
+    {
+        if (p->name == convertToUpperCase(name))
+        {
+            break;
+        }
+        p = p->next;
+    }
+    if (head == tail)
+    {
+        delete head;
+        head = nullptr;
+        tail = nullptr;
+        cout << "Patient " << convertToUpperCase(name) << " is Discharged!" << endl;
+    }
+    else if (p == head)
+    {
+        node *del = head;
+        head->next->prev = head->prev;
+        head = head->next;
+        delete del;
+        cout << "Patient " << convertToUpperCase(name) << " is Discharged!" << endl;
+    }
+    else if (p == tail)
+    {
+        node *del = tail;
+        tail->prev->next = tail->next;
+        tail = tail->prev;
+        delete del;
+        cout << "Patient " << convertToUpperCase(name) << " is Discharged!" << endl;
+    }
+    else
+    {
+        node *del = p;
+        p->prev->next = p->next;
+        p->next->prev = p->prev;
+        delete del;
+        cout << "Patient " << convertToUpperCase(name) << " is Discharged!" << endl;
+    }
+}
 
 void update(string name, string condition)
 {
@@ -228,13 +271,14 @@ void update(string name, string condition)
         if (condition == "SEVERE" || condition == "MODERATE" || condition == "MILD" || condition == "NORMAL")
         {
             p->condition = condition;
-            // if (condition == "NORMAL")
-            // {
-
-            // }
+            if (condition == "NORMAL")
+            {
+                dischargeNormal(name);
+            }
             cout << "Condition Updated" << endl;
         }
     }
+
     else
     {
         cout << "Patient Not Found" << endl;
@@ -252,36 +296,14 @@ int main()
 
     display(head);
 
-    // node *searched = search("Abdullah");
-    // if (searched != nullptr)
-    //     cout << searched->name << endl;
-    // else
-    //     cout << "Patient Not found" << endl;
+    node *searched = search("Abdullah");
+    if (searched != nullptr)
+        cout << searched->name << endl;
+    else
+        cout << "Patient Not found" << endl;
 
-    // update("Rana", "Moderate");
-    // display(head);
-
-    dequeue();
+    update("Rana", "NORMAL");
     display(head);
-
-    dequeue();
-    display(head);
-
-    dequeue();
-    display(head);
-
-    dequeue();
-    display(head);
-
-    dequeue();
-    display(head);
-
-    dequeue();
-    display(head);
-
-    dequeue();
-    display(head);
-
-    dequeue();
-    display(head);
+    //update("Bukhari", "noraml");
+    //display(head);
 }
