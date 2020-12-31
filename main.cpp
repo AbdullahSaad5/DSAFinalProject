@@ -26,7 +26,29 @@ string convertToUpperCase(string message)
     }
     return message;
 }
+bool checkString(string message)
+{
+    for (int i = 0; i < message.length(); i++)
+    {
+        if (!isalpha(message[i]) || !isspace(message[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
+bool checkNumber(string message)
+{
+    for (int i = 0; i < message.length(); i++)
+    {
+        if (!isdigit(message[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
 void setPriority(node *patient)
 {
     if (patient->disease == "COVID-19")
@@ -316,7 +338,6 @@ int main()
         switch (choice)
         {
         case 1:
-
             cout << "Enter Patient Name:";
             cin >> patient_name;
             cout << "Enter Patient Age:";
