@@ -1,6 +1,8 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 using namespace std;
+
 struct node
 {
     node() {}
@@ -31,6 +33,7 @@ struct node
 node *head = nullptr;
 node *tail = nullptr;
 
+void addPatient(node *patient);
 string convertToUpperCase(string message)
 {
     for (int i = 0; i < message.length(); ++i)
@@ -74,6 +77,139 @@ bool checkNumber(string message)
     }
     return true;
 }
+
+void addToFile(node *person)
+{
+    ofstream myFile;
+    myFile.open("Patient Record.txt", ios_base::app);
+    myFile << person->name + "\n";
+    myFile << to_string(person->age) + "\n";
+    myFile << person->socialSecurityNumber + "\n";
+    myFile << person->gender + "\n";
+    myFile << person->disease + "\n";
+    myFile << person->condition + "\n";
+    myFile << to_string(person->date) + "\n";
+    myFile << to_string(person->month) + "\n";
+    myFile << to_string(person->year) + "\n";
+    myFile.close();
+}
+
+void readFromFile()
+{
+    ifstream myFile;
+    myFile.open("Patient Record.txt");
+    while (myFile.peek() != EOF)
+    {
+        node *person = new node;
+        getline(myFile, person->name);
+        string age, day, month, year;
+        getline(myFile, age);
+        getline(myFile, person->socialSecurityNumber);
+        getline(myFile, person->gender);
+        getline(myFile, person->disease);
+        getline(myFile, person->condition);
+        getline(myFile, day);
+        getline(myFile, month);
+        getline(myFile, year);
+        person->age = stoi(age);
+        person->date = stoi(day);
+        person->month = stoi(month);
+        person->year = stoi(year);
+        addPatient(person);
+    }
+    myFile.close();
+}
+void removeFromFile(string name)
+{
+    ofstream myFile1;
+    myFile1.open("temp.txt");
+    ifstream myFile2;
+    myFile2.open("Patient Record.txt");
+    while (myFile2.peek() != EOF)
+    {
+        string line, neglect;
+        getline(myFile2, line);
+        if (line == convertToUpperCase(name))
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                getline(myFile2, neglect);
+            }
+        }
+        else
+        {
+            myFile1 << line + "\n";
+        }
+    }
+    myFile1.close();
+    myFile2.close();
+    remove("Patient Record.txt");
+    rename("temp.txt", "Patient Record.txt");
+}
+
+// void updateFile(string name)
+// {
+//     node *person = search(name);
+//     ofstream myFile1;
+//     myFile1.open("temp.txt");
+//     ifstream myFile2;
+//     myFile2.open("Patient Record.txt");
+//     while (myFile2.peek() != EOF)
+//     {
+//         string line, neglect;
+//         getline(myFile2, line);
+//         if (line == convertToUpperCase(name))
+//         {
+//             myFile1 << person->name + "\n";
+//             myFile1 << to_string(person->age) + "\n";
+//             myFile1 << person->socialSecurityNumber + "\n";
+//             myFile1 << person->gender + "\n";
+//             myFile1 << person->disease + "\n";
+//             myFile1 << person->condition + "\n";
+//             myFile1 << to_string(person->date) + "\n";
+//             myFile1 << to_string(person->month) + "\n";
+//             myFile1 << to_string(person->year) + "\n";
+//         }
+//         else
+//         {
+//             myFile1 << line + "\n";
+//         }
+//     }void updateFile(string name)
+// {
+//     node *person = search(name);
+//     ofstream myFile1;
+//     myFile1.open("temp.txt");
+//     ifstream myFile2;
+//     myFile2.open("Patient Record.txt");
+//     while (myFile2.peek() != EOF)
+//     {
+//         string line, neglect;
+//         getline(myFile2, line);
+//         if (line == convertToUpperCase(name))
+//         {
+//             myFile1 << person->name + "\n";
+//             myFile1 << to_string(person->age) + "\n";
+//             myFile1 << person->socialSecurityNumber + "\n";
+//             myFile1 << person->gender + "\n";
+//             myFile1 << person->disease + "\n";
+//             myFile1 << person->condition + "\n";
+//             myFile1 << to_string(person->date) + "\n";
+//             myFile1 << to_string(person->month) + "\n";
+//             myFile1 << to_string(person->year) + "\n";
+//         }
+//         else
+//         {
+//             myFile1 << line + "\n";
+//         }
+//     }
+//     myFile1.close();
+//     myFile2.close();
+//     remove("Patient Record.txt");
+//     rename("temp.txt", "Patient Record.txt");
+// }
+//     remove("Patient Record.txt");
+//     rename("temp.txt", "Patient Record.txt");
+// }
 void setPriority(node *patient)
 {
     if (patient->disease == "COVID-19")
@@ -105,7 +241,7 @@ void setPriority(node *patient)
             patient->priority = 3;
         }
     }
-    else if (patient->disease == "CANCER")
+    else if (patient->disease == "PNEUMONIA")
     {
         if (patient->age >= 50)
         {
@@ -123,6 +259,7 @@ void setPriority(node *patient)
 }
 void addPatient(node *patient)
 {
+    setPriority(patient);
     if (head == nullptr && tail == nullptr)
     {
         head = tail = patient;
@@ -250,6 +387,7 @@ void removePatient(string name)
         head = nullptr;
         tail = nullptr;
     }
+
     else if (p == head)
     {
         node *del = head;
@@ -293,14 +431,14 @@ void update(string name, string condition)
             p->condition = condition;
             if (condition == "NORMAL")
             {
-                removePatient(p->name);
+                removePatient(name);
+                removeFromFile(name);
             }
             else
             {
                 node *q = p;
-                setPriority(p);
                 addPatient(p);
-                removePatient(q->name);
+                removePatient(name);
             }
             cout << "Condition Updated" << endl;
         }
@@ -319,6 +457,7 @@ void update(string name, string condition)
 int main()
 {
     //Main Menu
+    readFromFile();
     bool infinite_loop = true;
     while (infinite_loop)
     {
@@ -360,7 +499,7 @@ int main()
             }
             cout << "Enter Patient SSN: ";
             cin >> p_socialSecurityNumber;
-            if (!checkNumber(p_socialSecurityNumber))
+            if (!(checkNumber(p_socialSecurityNumber))) // TODO: 1. Must add length check
             {
                 cout << "Invalid SSN. Must be Digits only.";
                 break;
@@ -372,11 +511,11 @@ int main()
                 cout << "Invalid Gender. Must be Letters only.";
                 break;
             }
-            cout << "Enter Patient Disease (Covid-19/Cancer/Flu): ";
+            cout << "Enter Patient Disease (Covid-19/Pneumonia/Flu): ";
             cin >> p_disease;
-            if (!(convertToUpperCase(p_disease) == "COVID-19" || convertToUpperCase(p_disease) == "CANCER" || convertToUpperCase(p_disease) == "FLU"))
+            if (!(convertToUpperCase(p_disease) == "COVID-19" || convertToUpperCase(p_disease) == "PNEUMONIA" || convertToUpperCase(p_disease) == "FLU"))
             {
-                cout << "The disease is not cured here. We cure COVID-19/CANCER/FLU only.";
+                cout << "The disease is not cured here. We cure COVID-19/PNEUMONIA/FLU only.";
                 break;
             }
             cout << "Enter Patient Condition (Severe/Moderate/Mild): ";
@@ -407,8 +546,9 @@ int main()
                 cout << "Invalid Year. Must be Digits only.";
                 break;
             }
-            patient = new node(patient_name, patient_age, p_socialSecurityNumber, p_gender, p_disease, p_condition, p_date, p_month, p_year);
+            patient = new node(convertToUpperCase(patient_name), patient_age, convertToUpperCase(p_socialSecurityNumber), convertToUpperCase(p_gender), convertToUpperCase(p_disease), convertToUpperCase(p_condition), p_date, p_month, p_year);
             addPatient(patient);
+            addToFile(patient);
             break;
         case 2:
             display(head);
