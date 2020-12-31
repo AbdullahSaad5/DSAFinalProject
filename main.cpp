@@ -3,6 +3,19 @@
 using namespace std;
 struct node
 {
+    node() {}
+    node(string name, int age, string SSN, string gender, string disease, string condition, int date, int month, int year)
+    {
+        this->name = name;
+        this->age = age;
+        this->socialSecurityNumber = SSN;
+        this->gender = gender;
+        this->disease = disease;
+        this->condition = condition;
+        this->date = date;
+        this->month = month;
+        this->year = year;
+    }
     string name;
     int age;
     string socialSecurityNumber;
@@ -30,7 +43,19 @@ bool checkString(string message)
 {
     for (int i = 0; i < message.length(); i++)
     {
-        if (!isalpha(message[i]) || !isspace(message[i]))
+        if (!isalpha(message[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool checkStringWithSpaces(string message)
+{
+    for (int i = 0; i < message.length(); i++)
+    {
+        if (!(isalpha(message[i]) || isspace(message[i])))
         {
             return false;
         }
@@ -96,66 +121,42 @@ void setPriority(node *patient)
         patient->priority = 5;
     }
 }
-void addPatient(string name, int age, string socialSecurityNumber, string gender, string disease, string condition, int day,
-                int month, int year)
+void addPatient(node *patient)
 {
-    if (!name.empty() && (age > 0 && age < 100) &&
-        (!socialSecurityNumber.empty() && socialSecurityNumber.length() == 13) &&
-        (convertToUpperCase(gender) == "MALE" || convertToUpperCase(gender) == "FEMALE") && (convertToUpperCase(disease) == "COVID-19" || convertToUpperCase(disease) == "CANCER" || convertToUpperCase(disease) == "FLU") &&
-        (convertToUpperCase(condition) == "SEVERE" || convertToUpperCase(condition) == "MILD" ||
-         convertToUpperCase(condition) == "MODERATE") &&
-        (day > 0 && day <= 30) && (month > 0 && month <= 12) && year == 2020)
+    if (head == nullptr && tail == nullptr)
     {
-        node *patient = new node;
-        patient->name = convertToUpperCase(name);
-        patient->age = age;
-        patient->socialSecurityNumber = socialSecurityNumber;
-        patient->gender = convertToUpperCase(gender);
-        patient->disease = convertToUpperCase(disease);
-        patient->condition = convertToUpperCase(condition);
-        patient->date = day;
-        patient->month = month;
-        patient->year = year;
-        setPriority(patient);
-        if (head == nullptr && tail == nullptr)
-        {
-            head = tail = patient;
-        }
-        else
-        {
-            int priority = patient->priority;
-
-            node *p = head;
-            node *q;
-            while (p != nullptr && p->priority <= priority)
-            {
-                q = p;
-                p = p->next;
-            }
-            if (p == head)
-            {
-                head->prev = patient;
-                patient->next = head;
-                head = patient;
-            }
-            else if (p == nullptr)
-            {
-                tail->next = patient;
-                patient->prev = tail;
-                tail = patient;
-            }
-            else
-            {
-                q->next = patient;
-                p->prev = patient;
-                patient->next = p;
-                patient->prev = q;
-            }
-        }
+        head = tail = patient;
     }
     else
     {
-        cout << "Invalid Info found in the patient's (" + name + ") Description. Please Enter Again!";
+        int priority = patient->priority;
+
+        node *p = head;
+        node *q;
+        while (p != nullptr && p->priority <= priority)
+        {
+            q = p;
+            p = p->next;
+        }
+        if (p == head)
+        {
+            head->prev = patient;
+            patient->next = head;
+            head = patient;
+        }
+        else if (p == nullptr)
+        {
+            tail->next = patient;
+            patient->prev = tail;
+            tail = patient;
+        }
+        else
+        {
+            q->next = patient;
+            p->prev = patient;
+            patient->next = p;
+            patient->prev = q;
+        }
     }
 }
 
@@ -298,10 +299,14 @@ void update(string name, string condition)
             {
                 node *q = p;
                 setPriority(p);
-                addPatient(p->name, p->age, p->socialSecurityNumber, p->gender, p->disease, p->condition, p->date, p->month, p->year);
+                addPatient(p);
                 removePatient(q->name);
             }
             cout << "Condition Updated" << endl;
+        }
+        else
+        {
+            cout << "Enter Valid Condition (Severe/Moderate/Mild/Normal)" << endl;
         }
     }
 
@@ -334,29 +339,76 @@ int main()
         string p_disease;
         string p_condition;
         int p_date, p_month, p_year;
-
+        node *patient;
         switch (choice)
         {
         case 1:
             cout << "Enter Patient Name:";
-            cin >> patient_name;
+            cin.ignore();
+            getline(cin, patient_name);
+            if (!checkStringWithSpaces(patient_name) && !patient_name.empty())
+            {
+                cout << "Invalid Name. Must be String only.";
+                break;
+            }
             cout << "Enter Patient Age:";
             cin >> patient_age;
+            if (!checkNumber(to_string(patient_age)))
+            {
+                cout << "Invalid Age. Must be Digits only.";
+                break;
+            }
             cout << "Enter Patient SSN: ";
             cin >> p_socialSecurityNumber;
-            cout << "Enter Patient Gender: ";
+            if (!checkNumber(p_socialSecurityNumber))
+            {
+                cout << "Invalid SSN. Must be Digits only.";
+                break;
+            }
+            cout << "Enter Patient Gender (Male/Female): ";
             cin >> p_gender;
-            cout << "Enter Patient Disease: ";
+            if (!(convertToUpperCase(p_gender) == "MALE" || convertToUpperCase(p_gender) == "FEMALE"))
+            {
+                cout << "Invalid Gender. Must be Letters only.";
+                break;
+            }
+            cout << "Enter Patient Disease (Covid-19/Cancer/Flu): ";
             cin >> p_disease;
-            cout << "Enter Patient Condition: ";
+            if (!(convertToUpperCase(p_disease) == "COVID-19" || convertToUpperCase(p_disease) == "CANCER" || convertToUpperCase(p_disease) == "FLU"))
+            {
+                cout << "The disease is not cured here. We cure COVID-19/CANCER/FLU only.";
+                break;
+            }
+            cout << "Enter Patient Condition (Severe/Moderate/Mild): ";
             cin >> p_condition;
+            if (!(convertToUpperCase(p_condition) == "SEVERE" || convertToUpperCase(p_condition) == "MODERATE" || convertToUpperCase(p_condition) == "MILD"))
+            {
+                cout << "Invalid Condition. Must be Digits only.";
+                break;
+            }
             cout << "Enter Patient Admit Date: ";
             cin >> p_date;
+            if (!(checkNumber(to_string(p_date)) && p_date <= 31 && p_date >= 1))
+            {
+                cout << "Invalid Date. Must be Digits only.";
+                break;
+            }
             cout << "Enter Patient Admit Month: ";
             cin >> p_month;
+            if (!(checkNumber(to_string(p_month)) && p_month >= 1 && p_month <= 12))
+            {
+                cout << "Invalid Month. Must be Digits only.";
+                break;
+            }
             cout << "Enter Patient Admit Year: ";
             cin >> p_year;
-            addPatient(patient_name, patient_age, p_socialSecurityNumber, p_gender, p_disease, p_condition, p_date, p_month, p_year);
+            if (!(checkNumber(to_string(p_year)) && p_year >= 2019 && p_year <= 2020))
+            {
+                cout << "Invalid Year. Must be Digits only.";
+                break;
+            }
+            patient = new node(patient_name, patient_age, p_socialSecurityNumber, p_gender, p_disease, p_condition, p_date, p_month, p_year);
+            addPatient(patient);
             break;
         case 2:
             display(head);
