@@ -33,6 +33,9 @@ struct node
 node *head = nullptr;
 node *tail = nullptr;
 
+const int hospitals[4][2] = {{80, 27}, {36, 54}, {60, 67}, {11, 18}};
+const int ambulance[] = {0, 0};
+
 void addPatient(node *patient);
 string convertToUpperCase(string message)
 {
@@ -318,44 +321,44 @@ void display(node *starting)
     cout << endl;
 }
 
-void dequeue()
-{
-    if (head == nullptr)
-    {
-        cout << "Nothing in queue" << endl;
-    }
-    else if (head == tail)
-    {
-        cout << head->name + " discharged!"
-             << endl;
-        head->condition = "NORMAL";
-        head->disease = "NIL";
-        delete head;
-        head = nullptr;
-        tail = nullptr;
-    }
-    else if (head->next == tail)
-    {
-        cout << head->name + " discharged!"
-             << endl;
-        head->condition = "NORMAL";
-        head->disease = "NIL";
-        node *p = head;
-        head = tail;
-        delete p;
-    }
-    else
-    {
-        cout << head->name + " discharged!"
-             << endl;
-        head->condition = "NORMAL";
-        head->disease = "NIL";
-        node *del = head;
-        head = head->next;
-        head->next->prev = head;
-        delete del;
-    }
-}
+// void dequeue()
+// {
+//     if (head == nullptr)
+//     {
+//         cout << "Nothing in queue" << endl;
+//     }
+//     else if (head == tail)
+//     {
+//         cout << head->name + " discharged!"
+//              << endl;
+//         head->condition = "NORMAL";
+//         head->disease = "NIL";
+//         delete head;
+//         head = nullptr;
+//         tail = nullptr;
+//     }
+//     else if (head->next == tail)
+//     {
+//         cout << head->name + " discharged!"
+//              << endl;
+//         head->condition = "NORMAL";
+//         head->disease = "NIL";
+//         node *p = head;
+//         head = tail;
+//         delete p;
+//     }
+//     else
+//     {
+//         cout << head->name + " discharged!"
+//              << endl;
+//         head->condition = "NORMAL";
+//         head->disease = "NIL";
+//         node *del = head;
+//         head = head->next;
+//         head->next->prev = head;
+//         delete del;
+//     }
+// }
 
 node *search(string name)
 {
@@ -437,8 +440,8 @@ void update(string name, string condition)
             else
             {
                 node *q = p;
-                addPatient(p);
                 removePatient(name);
+                addPatient(p);
             }
             cout << "Condition Updated" << endl;
         }
@@ -464,13 +467,23 @@ int main()
         cout << "\nWelcome to Hospital Management System\n"
              << "1. Add Patient\n"
              << "2. View Patients\n"
-             << "3. Update Patient\n"
+             << "3. Update Patient Condition\n"
              << "4. Search Patient\n"
-             << "5. Discharged Patient\n"
+             //  << "5. Discharged Patient\n"
+             << "5. Ambulance Service\n"
              << "0. EXIT\n"
              << "Choice >> ";
         int choice;
-        cin >> choice;
+        string choiceTemp;
+        cin >> choiceTemp;
+        if (checkNumber(choiceTemp))
+        {
+            choice = stoi(choiceTemp);
+        }
+        else
+        {
+            cout << "Please enter digits only" << endl;
+        }
         string patient_name;
         int patient_age;
         string p_socialSecurityNumber;
@@ -478,7 +491,10 @@ int main()
         string p_disease;
         string p_condition;
         int p_date, p_month, p_year;
+        string ageTemp, dateTemp, monthTemp, yearTemp;
         node *patient;
+
+        int p_x, p_y;
         switch (choice)
         {
         case 1:
@@ -491,10 +507,14 @@ int main()
                 break;
             }
             cout << "Enter Patient Age:";
-            cin >> patient_age;
-            if (!checkNumber(to_string(patient_age)))
+            cin >> ageTemp;
+            if (checkNumber(ageTemp))
             {
-                cout << "Invalid Age. Must be Digits only.";
+                patient_age = stoi(ageTemp);
+            }
+            else
+            {
+                cout << "Please enter digits only" << endl;
                 break;
             }
             cout << "Enter Patient SSN: ";
@@ -527,21 +547,48 @@ int main()
             }
             cout << "Enter Patient Admit Date: ";
             cin >> p_date;
-            if (!(checkNumber(to_string(p_date)) && p_date <= 31 && p_date >= 1))
+            // if (checkNumber(dateTemp))
+            // {
+            //     p_date = stoi(dateTemp);
+            // }
+            // else
+            // {
+            //     cout << "Please enter digits only" << endl;
+            //     break;
+            // }
+            if (!(p_date <= 31 && p_date >= 1))
             {
                 cout << "Invalid Date. Must be Digits only.";
                 break;
             }
             cout << "Enter Patient Admit Month: ";
             cin >> p_month;
-            if (!(checkNumber(to_string(p_month)) && p_month >= 1 && p_month <= 12))
+            // if (checkNumber(monthTemp))
+            // {
+            //     p_month = stoi(monthTemp);
+            // }
+            // else
+            // {
+            //     cout << "Please enter digits only" << endl;
+            //     break;
+            // }
+            if (!(p_month >= 1 && p_month <= 12))
             {
                 cout << "Invalid Month. Must be Digits only.";
                 break;
             }
             cout << "Enter Patient Admit Year: ";
             cin >> p_year;
-            if (!(checkNumber(to_string(p_year)) && p_year >= 2019 && p_year <= 2020))
+            // if (checkNumber(yearTemp))
+            // {
+            //     p_year = stoi(yearTemp);
+            // }
+            // else
+            // {
+            //     cout << "Please enter digits only" << endl;
+            //     break;
+            // }
+            if (!(p_year >= 2019 && p_year <= 2020))
             {
                 cout << "Invalid Year. Must be Digits only.";
                 break;
@@ -565,13 +612,20 @@ int main()
             cin >> patient_name;
             search(patient_name);
             break;
-        case 5:
-            cout << "Highest Priority Patient Dequeued: ";
-            dequeue();
-            break;
-        case 0:
+            // case 5:
+            //     cout << "Highest Priority Patient Dequeued: ";
+            //     dequeue();
+            //     break;
+            // case 0:
             infinite_loop = false;
             break;
+            // case 5:
+            //     cout << "Welcome to Ambulance Service" << endl;
+            //     cout << "Enter X Co-ordinate (1-100): ";
+            //     cin >> p_x;
+            //     cout << "Enter Y Co-ordinate (1-100): ";
+            //     cin >> p_y;
+
         default:
             cout << "Invalid Command Entered!";
             break;
