@@ -1,8 +1,16 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cmath>
 using namespace std;
-
+//                  Hospital                                       Patient
+int cities[6][2] = {{0, 0}, {11, 18}, {36, 74}, {60, 67}, {80, 27}, {0, 0}};
+const int arraySize = 6;
+int array[arraySize][arraySize];
+const int inf = 1e7;
+bool visited[arraySize];
+int parents[arraySize];
+int answers[arraySize];
 struct node
 {
     node() {}
@@ -32,9 +40,6 @@ struct node
 };
 node *head = nullptr;
 node *tail = nullptr;
-
-const int hospitals[4][2] = {{80, 27}, {36, 54}, {60, 67}, {11, 18}};
-const int ambulance[] = {0, 0};
 
 void addPatient(node *patient);
 string convertToUpperCase(string message)
@@ -81,6 +86,17 @@ bool checkNumber(string message)
     return true;
 }
 
+bool checkBool(bool array[])
+{
+    for (int i = 0; i < arraySize; i++)
+    {
+        if (array[i] == false)
+        {
+            return false;
+        }
+    }
+    return true;
+}
 void addToFile(node *person)
 {
     ofstream myFile;
@@ -150,69 +166,95 @@ void removeFromFile(string name)
     rename("temp.txt", "Patient Record.txt");
 }
 
-// void updateFile(string name)
-// {
-//     node *person = search(name);
-//     ofstream myFile1;
-//     myFile1.open("temp.txt");
-//     ifstream myFile2;
-//     myFile2.open("Patient Record.txt");
-//     while (myFile2.peek() != EOF)
-//     {
-//         string line, neglect;
-//         getline(myFile2, line);
-//         if (line == convertToUpperCase(name))
-//         {
-//             myFile1 << person->name + "\n";
-//             myFile1 << to_string(person->age) + "\n";
-//             myFile1 << person->socialSecurityNumber + "\n";
-//             myFile1 << person->gender + "\n";
-//             myFile1 << person->disease + "\n";
-//             myFile1 << person->condition + "\n";
-//             myFile1 << to_string(person->date) + "\n";
-//             myFile1 << to_string(person->month) + "\n";
-//             myFile1 << to_string(person->year) + "\n";
-//         }
-//         else
-//         {
-//             myFile1 << line + "\n";
-//         }
-//     }void updateFile(string name)
-// {
-//     node *person = search(name);
-//     ofstream myFile1;
-//     myFile1.open("temp.txt");
-//     ifstream myFile2;
-//     myFile2.open("Patient Record.txt");
-//     while (myFile2.peek() != EOF)
-//     {
-//         string line, neglect;
-//         getline(myFile2, line);
-//         if (line == convertToUpperCase(name))
-//         {
-//             myFile1 << person->name + "\n";
-//             myFile1 << to_string(person->age) + "\n";
-//             myFile1 << person->socialSecurityNumber + "\n";
-//             myFile1 << person->gender + "\n";
-//             myFile1 << person->disease + "\n";
-//             myFile1 << person->condition + "\n";
-//             myFile1 << to_string(person->date) + "\n";
-//             myFile1 << to_string(person->month) + "\n";
-//             myFile1 << to_string(person->year) + "\n";
-//         }
-//         else
-//         {
-//             myFile1 << line + "\n";
-//         }
-//     }
-//     myFile1.close();
-//     myFile2.close();
-//     remove("Patient Record.txt");
-//     rename("temp.txt", "Patient Record.txt");
-// }
-//     remove("Patient Record.txt");
-//     rename("temp.txt", "Patient Record.txt");
-// }
+void prims(int starting)
+{
+    visited[starting] = true;
+    parents[starting] = 0;
+    for (int i = 0; i < arraySize; i++)
+    {
+        answers[i] = array[starting][i];
+    }
+    for (int i = 0; i < arraySize; i++)
+    {
+        if (array[starting][i] != 100)
+        {
+            parents[i] = starting;
+        }
+    }
+    while (checkBool(visited) != true)
+    {
+        int smallest = 1000;
+        int index = 0;
+        for (int i = 0; i < arraySize; i++)
+        {
+            if (answers[i] < smallest && visited[i] == false)
+            {
+                smallest = answers[i];
+                index = i;
+            }
+        }
+
+        for (int i = 0; i < arraySize; i++)
+        {
+            int distance = array[index][i] + smallest;
+            if (distance < answers[i] && array[index][i] != 0 && !visited[i])
+            {
+                answers[i] = distance;
+                parents[i] = index;
+            }
+        }
+        if (parents[starting] != 0)
+        {
+            parents[starting] = 0;
+        }
+        visited[index] = true;
+    }
+}
+
+void printPath(int parents[])
+{
+    cout << "Patient ->";
+    int parent = parents[5];
+    while (parent != 0)
+    {
+        cout << " City " << parent << "->";
+        parent = parents[parent];
+    }
+    cout << " Hospital" << endl;
+}
+int findDistance(int (&array1)[2], int (&array2)[2])
+{
+    int distance1, distance2;
+    distance1 = pow(array1[0] - array2[0], 2);
+    distance2 = pow(array1[1] - array2[1], 2);
+    return sqrt(distance1 + distance2);
+}
+
+void calculateDistances()
+{
+    for (int i = 0; i < arraySize; i++)
+    {
+        for (int j = 0; j < arraySize; j++)
+        {
+            if (i == 1 && j == 5 || i == 5 && j == 1)
+            {
+                array[i][j] = inf;
+            }
+            else if ((i == 0 && j > 1) || (i > 1 && j == 0))
+            {
+                array[i][j] = inf;
+            }
+            else if ((i == 2 && j == 4) || (i == 4 && j == 2))
+            {
+                array[i][j] = inf;
+            }
+            else
+            {
+                array[i][j] = findDistance(cities[i], cities[j]);
+            }
+        }
+    }
+}
 void setPriority(node *patient)
 {
     if (patient->disease == "COVID-19")
@@ -321,45 +363,6 @@ void display(node *starting)
     cout << endl;
 }
 
-// void dequeue()
-// {
-//     if (head == nullptr)
-//     {
-//         cout << "Nothing in queue" << endl;
-//     }
-//     else if (head == tail)
-//     {
-//         cout << head->name + " discharged!"
-//              << endl;
-//         head->condition = "NORMAL";
-//         head->disease = "NIL";
-//         delete head;
-//         head = nullptr;
-//         tail = nullptr;
-//     }
-//     else if (head->next == tail)
-//     {
-//         cout << head->name + " discharged!"
-//              << endl;
-//         head->condition = "NORMAL";
-//         head->disease = "NIL";
-//         node *p = head;
-//         head = tail;
-//         delete p;
-//     }
-//     else
-//     {
-//         cout << head->name + " discharged!"
-//              << endl;
-//         head->condition = "NORMAL";
-//         head->disease = "NIL";
-//         node *del = head;
-//         head = head->next;
-//         head->next->prev = head;
-//         delete del;
-//     }
-// }
-
 node *search(string name)
 {
     node *p = head;
@@ -464,12 +467,11 @@ int main()
     bool infinite_loop = true;
     while (infinite_loop)
     {
-        cout << "\nWelcome to Hospital Management System\n"
+        cout << "\n\nWelcome to Hospital Management System\n"
              << "1. Add Patient\n"
              << "2. View Patients\n"
              << "3. Update Patient Condition\n"
              << "4. Search Patient\n"
-             //  << "5. Discharged Patient\n"
              << "5. Ambulance Service\n"
              << "0. EXIT\n"
              << "Choice >> ";
@@ -483,6 +485,7 @@ int main()
         else
         {
             cout << "Please enter digits only" << endl;
+            continue;
         }
         string patient_name;
         int patient_age;
@@ -600,6 +603,7 @@ int main()
         case 2:
             display(head);
             break;
+
         case 3:
             cout << "Enter Patient Name: ";
             cin >> patient_name;
@@ -612,19 +616,20 @@ int main()
             cin >> patient_name;
             search(patient_name);
             break;
-            // case 5:
-            //     cout << "Highest Priority Patient Dequeued: ";
-            //     dequeue();
-            //     break;
-            // case 0:
+
+        case 5:
+            cout << "Enter X Co-ordinate (50-100):";
+            cin >> cities[5][0];
+            cout << "Enter Y Co-ordinate (50-100)";
+            cin >> cities[5][1];
+            calculateDistances();
+            prims(0);
+            cout << "Ambulance Path will be: ";
+            printPath(parents);
+            break;
+        case 0:
             infinite_loop = false;
             break;
-            // case 5:
-            //     cout << "Welcome to Ambulance Service" << endl;
-            //     cout << "Enter X Co-ordinate (1-100): ";
-            //     cin >> p_x;
-            //     cout << "Enter Y Co-ordinate (1-100): ";
-            //     cin >> p_y;
 
         default:
             cout << "Invalid Command Entered!";
