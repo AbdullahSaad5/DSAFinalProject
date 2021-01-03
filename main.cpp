@@ -168,6 +168,12 @@ void removeFromFile(string name)
 
 void prims(int starting)
 {
+    for (int i = 0; i < arraySize; i++)
+    {
+        visited[i] = false;
+        answers[i] = 0;
+        parents[i] = 0;
+    }
     visited[starting] = true;
     parents[starting] = 0;
     for (int i = 0; i < arraySize; i++)
