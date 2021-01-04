@@ -624,9 +624,9 @@ int main()
             break;
 
         case 5:
-            cout << "Enter X Co-ordinate (50-100):";
+            cout << "Enter X Co-ordinate: ";
             cin >> cities[5][0];
-            cout << "Enter Y Co-ordinate (50-100)";
+            cout << "Enter Y Co-ordinate: ";
             cin >> cities[5][1];
             calculateDistances();
             prims(0);
