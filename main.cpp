@@ -743,7 +743,7 @@ int main()
             }
             else
             {
-                array[arraySize - 1][0] = stoi(temp_x);
+                cities[5][0] = stoi(temp_x);
             }
             cout << "Enter Y Co-ordinate: ";
             cin >> temp_y;
@@ -754,7 +754,7 @@ int main()
             }
             else
             {
-                array[arraySize - 1][1] = stoi(temp_y);
+                cities[5][1] = stoi(temp_y);
             }
             calculateDistances();
             dijkstra(0);
