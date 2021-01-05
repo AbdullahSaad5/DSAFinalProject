@@ -3,6 +3,7 @@
 #include <string>
 #include <cmath>
 using namespace std;
+// Defining co-ordinates of Cities, Hospital and Patient;
 //                  Hospital                                       Patient
 int cities[6][2] = {{0, 0}, {11, 18}, {36, 74}, {60, 67}, {80, 27}, {0, 0}};
 const int arraySize = 6;
@@ -41,7 +42,31 @@ struct node
 node *head = nullptr;
 node *tail = nullptr;
 
+//Defining Function Headers
 void addPatient(node *patient);
+string convertToUpperCase(string message);
+bool checkString(string message);
+bool checkString(string message);
+bool isBlank(string message);
+bool checkStringWithSpaces(string message);
+bool checkNumber(string message);
+bool checkBool(bool array[]);
+void addToFile(node *person);
+void readFromFile();
+void removeFromFile(string name);
+void dijkstra(int starting);
+void printPath(int parents[]);
+int findDistance(int (&array1)[2], int (&array2)[2]);
+void calculateDistances();
+void setPriority(node *patient);
+void addPatient(node *patient);
+void treatPatient();
+void display(node *starting);
+node *search(string name);
+void removePatient(string name);
+void update(string name, string condition);
+
+// Method for converting string to uppercase
 string convertToUpperCase(string message)
 {
     for (int i = 0; i < message.length(); ++i)
@@ -50,6 +75,7 @@ string convertToUpperCase(string message)
     }
     return message;
 }
+//Method to check if string is alphabetic only
 bool checkString(string message)
 {
     for (int i = 0; i < message.length(); i++)
@@ -62,6 +88,21 @@ bool checkString(string message)
     return true;
 }
 
+//Method to check if string is blank
+bool isBlank(string message)
+{
+    bool blank = true;
+    for (int i = 0; i < message.length(); i++)
+    {
+        if (!(isspace(message[i])))
+        {
+            blank = false;
+        }
+    }
+    return blank;
+}
+
+//Method to check if string is alphabetic and has space characters
 bool checkStringWithSpaces(string message)
 {
     for (int i = 0; i < message.length(); i++)
@@ -74,6 +115,7 @@ bool checkStringWithSpaces(string message)
     return true;
 }
 
+//Method to check if string is numeric only
 bool checkNumber(string message)
 {
     for (int i = 0; i < message.length(); i++)
@@ -86,6 +128,7 @@ bool checkNumber(string message)
     return true;
 }
 
+//Method to check if every index of boolean array is true
 bool checkBool(bool array[])
 {
     for (int i = 0; i < arraySize; i++)
@@ -97,6 +140,8 @@ bool checkBool(bool array[])
     }
     return true;
 }
+
+//Method to write details of person in a .txt file
 void addToFile(node *person)
 {
     ofstream myFile;
@@ -113,6 +158,7 @@ void addToFile(node *person)
     myFile.close();
 }
 
+//Method to read details of person from a .txt file
 void readFromFile()
 {
     ifstream myFile;
@@ -138,6 +184,8 @@ void readFromFile()
     }
     myFile.close();
 }
+
+//Method to remove details from person in a .txt file
 void removeFromFile(string name)
 {
     ofstream myFile1;
@@ -166,7 +214,9 @@ void removeFromFile(string name)
     rename("temp.txt", "Patient Record.txt");
 }
 
-void prims(int starting)
+// Method of Dijkstra's Algorithm
+// Finds the shortest path for ambulance to reach the patient
+void dijkstra(int starting)
 {
     for (int i = 0; i < arraySize; i++)
     {
@@ -217,6 +267,7 @@ void prims(int starting)
     }
 }
 
+// Method to print path for ambulance to travel
 void printPath(int parents[])
 {
     cout << "Patient ->";
@@ -228,6 +279,8 @@ void printPath(int parents[])
     }
     cout << " Hospital" << endl;
 }
+
+// Finds distances between two points on a map
 int findDistance(int (&array1)[2], int (&array2)[2])
 {
     int distance1, distance2;
@@ -236,6 +289,7 @@ int findDistance(int (&array1)[2], int (&array2)[2])
     return sqrt(distance1 + distance2);
 }
 
+// Method to find the distances between all the nodes of the graph
 void calculateDistances()
 {
     for (int i = 0; i < arraySize; i++)
@@ -261,6 +315,8 @@ void calculateDistances()
         }
     }
 }
+
+// Sets the priority of the patient based on disease and condition
 void setPriority(node *patient)
 {
     if (patient->disease == "COVID-19")
@@ -308,6 +364,8 @@ void setPriority(node *patient)
         patient->priority = 5;
     }
 }
+
+// Adds patient to the hospital queue.
 void addPatient(node *patient)
 {
     setPriority(patient);
@@ -348,6 +406,50 @@ void addPatient(node *patient)
     }
 }
 
+// Treat the patient with highest priority and discharged him/her.
+void treatPatient()
+{
+    if (head == nullptr)
+    {
+        cout << "Nothing in queue" << endl;
+    }
+    else if (head == tail)
+    {
+        cout << head->name + " discharged!"
+             << endl;
+        head->condition = "NORMAL";
+        head->disease = "NIL";
+        removeFromFile(head->name);
+        delete head;
+        head = nullptr;
+        tail = nullptr;
+    }
+    else if (head->next == tail)
+    {
+        cout << head->name + " discharged!"
+             << endl;
+        removeFromFile(head->name);
+        head->condition = "NORMAL";
+        head->disease = "NIL";
+        node *p = head;
+        head = tail;
+        delete p;
+    }
+    else
+    {
+        cout << head->name + " discharged!"
+             << endl;
+        head->condition = "NORMAL";
+        head->disease = "NIL";
+        removeFromFile(head->name);
+        node *del = head;
+        head = head->next;
+        head->next->prev = head;
+        delete del;
+    }
+}
+
+// Display all the patient data
 void display(node *starting)
 {
     int count = 1;
@@ -369,6 +471,7 @@ void display(node *starting)
     cout << endl;
 }
 
+// Method to search for a patient.
 node *search(string name)
 {
     node *p = head;
@@ -382,6 +485,8 @@ node *search(string name)
     }
     return nullptr;
 }
+
+// Method to remove specific patient by searching.
 void removePatient(string name)
 {
     node *p = head;
@@ -423,6 +528,7 @@ void removePatient(string name)
     }
 }
 
+// Method to update patient condition
 void update(string name, string condition)
 {
     node *p = head;
@@ -476,9 +582,10 @@ int main()
         cout << "\n\nWelcome to Hospital Management System\n"
              << "1. Add Patient\n"
              << "2. View Patients\n"
-             << "3. Update Patient Condition\n"
-             << "4. Search Patient\n"
-             << "5. Ambulance Service\n"
+             << "3. Treat Patient\n"
+             << "4. Update Patient Condition\n"
+             << "5. Search Patient\n"
+             << "6. Ambulance Service\n"
              << "0. EXIT\n"
              << "Choice >> ";
         int choice;
@@ -500,7 +607,7 @@ int main()
         string p_disease;
         string p_condition;
         int p_date, p_month, p_year;
-        string ageTemp, dateTemp, monthTemp, yearTemp;
+        string ageTemp, dateTemp, monthTemp, yearTemp, temp_x, temp_y;
         node *patient;
 
         int p_x, p_y;
@@ -510,7 +617,7 @@ int main()
             cout << "Enter Patient Name:";
             cin.ignore();
             getline(cin, patient_name);
-            if (!checkStringWithSpaces(patient_name) && !patient_name.empty())
+            if (!checkStringWithSpaces(patient_name) || patient_name.empty() || isBlank(patient_name))
             {
                 cout << "Invalid Name. Must be String only.";
                 break;
@@ -528,7 +635,7 @@ int main()
             }
             cout << "Enter Patient SSN: ";
             cin >> p_socialSecurityNumber;
-            if (!(checkNumber(p_socialSecurityNumber))) // TODO: 1. Must add length check
+            if (!(checkNumber(p_socialSecurityNumber)))
             {
                 cout << "Invalid SSN. Must be Digits only.";
                 break;
@@ -555,48 +662,48 @@ int main()
                 break;
             }
             cout << "Enter Patient Admit Date: ";
-            cin >> p_date;
-            // if (checkNumber(dateTemp))
-            // {
-            //     p_date = stoi(dateTemp);
-            // }
-            // else
-            // {
-            //     cout << "Please enter digits only" << endl;
-            //     break;
-            // }
+            cin >> dateTemp;
+            if (checkNumber(dateTemp))
+            {
+                p_date = stoi(dateTemp);
+            }
+            else
+            {
+                cout << "Please enter digits only" << endl;
+                break;
+            }
             if (!(p_date <= 31 && p_date >= 1))
             {
                 cout << "Invalid Date. Must be Digits only.";
                 break;
             }
             cout << "Enter Patient Admit Month: ";
-            cin >> p_month;
-            // if (checkNumber(monthTemp))
-            // {
-            //     p_month = stoi(monthTemp);
-            // }
-            // else
-            // {
-            //     cout << "Please enter digits only" << endl;
-            //     break;
-            // }
+            cin >> monthTemp;
+            if (checkNumber(monthTemp))
+            {
+                p_month = stoi(monthTemp);
+            }
+            else
+            {
+                cout << "Please enter digits only" << endl;
+                break;
+            }
             if (!(p_month >= 1 && p_month <= 12))
             {
                 cout << "Invalid Month. Must be Digits only.";
                 break;
             }
             cout << "Enter Patient Admit Year: ";
-            cin >> p_year;
-            // if (checkNumber(yearTemp))
-            // {
-            //     p_year = stoi(yearTemp);
-            // }
-            // else
-            // {
-            //     cout << "Please enter digits only" << endl;
-            //     break;
-            // }
+            cin >> yearTemp;
+            if (checkNumber(yearTemp))
+            {
+                p_year = stoi(yearTemp);
+            }
+            else
+            {
+                cout << "Please enter digits only" << endl;
+                break;
+            }
             if (!(p_year >= 2019 && p_year <= 2020))
             {
                 cout << "Invalid Year. Must be Digits only.";
@@ -611,25 +718,46 @@ int main()
             break;
 
         case 3:
+            treatPatient();
+            break;
+        case 4:
             cout << "Enter Patient Name: ";
             cin >> patient_name;
             cout << "Enter Patient Condition: ";
             cin >> p_condition;
             update(patient_name, p_condition);
             break;
-        case 4:
+        case 5:
             cout << "Enter Patient Name: ";
             cin >> patient_name;
             search(patient_name);
             break;
 
-        case 5:
+        case 6:
             cout << "Enter X Co-ordinate: ";
-            cin >> cities[5][0];
+            cin >> temp_x;
+            if (!checkNumber(temp_x) || isBlank(temp_x) || temp_x.empty())
+            {
+                cout << "Invalid Data Entered. Must be number only";
+                break;
+            }
+            else
+            {
+                array[arraySize - 1][0] = stoi(temp_x);
+            }
             cout << "Enter Y Co-ordinate: ";
-            cin >> cities[5][1];
+            cin >> temp_y;
+            if (!checkNumber(temp_y) || isBlank(temp_y) || temp_y.empty())
+            {
+                cout << "Invalid Data Entered. Must be number only";
+                break;
+            }
+            else
+            {
+                array[arraySize - 1][1] = stoi(temp_y);
+            }
             calculateDistances();
-            prims(0);
+            dijkstra(0);
             cout << "Ambulance Path will be: ";
             printPath(parents);
             break;
